@@ -25,12 +25,12 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
 
             $table->foreign('category_id')
-              ->references('id')->on('categories')
-              ->onDelete('set null'); // If category deleted, keep product in cart but category is null
+                  ->references('id')->on('categories')
+                  ->onDelete('set null'); // If category deleted, keep product in cart but category is null
         
             $table->foreign('user_id')
-              ->references('id')->on('users')
-              ->onDelete('cascade'); // If user deleted, delete their cart
+                  ->references('id')->on('users')
+                  ->onDelete('cascade'); // If user deleted, delete their cart
 
             $table->timestamps();
         });

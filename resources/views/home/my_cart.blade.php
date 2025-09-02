@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Your Cart</title>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+ 
 </head>
 <body class="bg-gray-100">
 
@@ -22,9 +24,9 @@
             $subtotal += $item['price'] * $item['quantity'];
         }
 
-        $tax = ($subtotal > 0) ? $subtotal * 0.1 : 0;
-        $shipping = ($subtotal > 0) ? 5 : 0;
-        $total_amount = $subtotal + $tax + $shipping;
+        // $tax = ($subtotal > 0) ? $subtotal * 0.1 : 0;
+        // $shipping = ($subtotal > 0) ? 5 : 0;
+        $total_amount = $subtotal;
     @endphp
 
     <!-- Page Content -->
@@ -57,7 +59,20 @@
                                             </div>
                                         </td>
                                         <td class="py-4">${{ number_format($item['price'], 2) }}</td>
-                                        <td class="py-4">{{ $item['quantity'] }}</td>
+                                        
+                                        <td class="py-4">
+                                            <div class="flex items-center space-x-2">
+                                                <button onclick="updateQuantity({{ $id }}, {{ $item['quantity'] - 1 }})" 
+                                                class="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300" 
+                                                    {{ $item['quantity'] <= 1 ? 'disabled' : '' }}>-</button>
+        
+                                                    <span class="px-3" id="qty-{{ $id }}">{{ $item['quantity'] }}</span>
+        
+                                                <button onclick="updateQuantity({{ $id }}, {{ $item['quantity'] + 1 }})" 
+                                                class="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300">+</button>
+                                            </div>
+                                        </td>
+
                                         <td class="py-4">${{ number_format($total, 2) }}</td>
                                         <td class="py-4">
                                             <a href="{{ route('remove_cart', $id) }}" class="text-red-600 hover:underline">Remove</a>
@@ -80,27 +95,70 @@
                         <span>Subtotal</span>
                         <span>${{ number_format($subtotal, 2) }}</span>
                     </div>
-                    <div class="flex justify-between mb-2">
+                    {{-- <div class="flex justify-between mb-2">
                         <span>Taxes (10%)</span>
                         <span>${{ number_format($tax, 2) }}</span>
                     </div>
                     <div class="flex justify-between mb-2">
                         <span>Shipping</span>
                         <span>${{ number_format($shipping, 2) }}</span>
-                    </div>
+                    </div> --}}
                     <hr class="my-2">
                     <div class="flex justify-between mb-2 font-semibold">
                         <span>Total</span>
                         <span>${{ number_format($total_amount, 2) }}</span>
                     </div>
-                    <button class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full hover:bg-blue-600 transition" {{ count($cart) == 0 ? 'disabled' : '' }}>
+                    <a href="{{ route('checkout') }}" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full hover:bg-blue-600 transition block text-center" {{ count($cart) == 0 ? 'style=pointer-events:none;opacity:0.5' : '' }}>
                         Checkout
-                    </button>
+                    </a>
+                
                 </div>
             </div>
 
         </div>
     </main>
+
+
+<script>
+function updateQuantity(id, newQuantity) {
+    if (newQuantity < 1) return;
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    
+    if (!csrfToken) {
+        alert('CSRF token not found!');
+        return;
+    }
+
+    fetch(`/update-cart/${id}`, {
+        method: 'PUT',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ quantity: parseInt(newQuantity) })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`qty-${id}`).textContent = newQuantity;
+            location.reload();
+        } else {
+            alert('Failed to update cart');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating cart: ' + error.message);
+    });
+}
+</script>
 
 </body>
 </html>
