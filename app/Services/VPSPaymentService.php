@@ -24,7 +24,7 @@ class VPSPaymentService
      */
     public function generatePaymentPayload($orderData, $customerData)
     {
-        
+
         // Calculate totals from cart data (no tax or shipping)
         $total_amount = 0;
         foreach ($orderData['cart'] as $item) {
@@ -60,12 +60,12 @@ class VPSPaymentService
             'paymentMethod' => 'CREDIT_CARD',
             'showPaymentProfiles' => false,
 
-        // In generatePaymentPayload method, replace the callback URLs:
-        
-        'callbackUrl' => 'https://f1b370c46b8a.ngrok-free.app/api/payment/webhook',
-        'successUrl' => 'https://f1b370c46b8a.ngrok-free.app/vps/success?order=' . $uniqueOrderId,
-        'failureUrl' => 'https://f1b370c46b8a.ngrok-free.app/vps/failure?order=' . $uniqueOrderId,
-        'cancelUrl' => 'https://f1b370c46b8a.ngrok-free.app/vps/cancel?order=' . $uniqueOrderId,
+            // In generatePaymentPayload method, replace the callback URLs:
+
+            'callbackUrl' => 'https://f1b370c46b8a.ngrok-free.app/api/payment/webhook',
+            'successUrl' => 'https://f1b370c46b8a.ngrok-free.app/vps/success?order=' . $uniqueOrderId,
+            'failureUrl' => 'https://f1b370c46b8a.ngrok-free.app/vps/failure?order=' . $uniqueOrderId,
+            'cancelUrl' => 'https://f1b370c46b8a.ngrok-free.app/vps/cancel?order=' . $uniqueOrderId,
         ];
 
         return $payload;
@@ -80,7 +80,7 @@ class VPSPaymentService
      * Create signed form for VPS PayWall
      */
 
-    
+
 
 
 
@@ -108,7 +108,7 @@ class VPSPaymentService
      */
 
 
-   /**
+    /**
      * Validate VPS notification signature
      */
 
@@ -121,19 +121,19 @@ class VPSPaymentService
             ]);
             return false;
         }
-        
+
         // Calculate expected signature using HMAC SHA256
         $calculated_signature = strtoupper(hash_hmac('sha256', $input, $this->notificationKey));
         $received_signature = strtoupper($signature);
-        
+
         \Log::info('VPS Signature Validation', [
             'calculated_signature' => $calculated_signature,
             'received_signature' => $received_signature,
             'signatures_match' => ($calculated_signature === $received_signature),
-            
-            
+
+
         ]);
-        
+
         return hash_equals($calculated_signature, $received_signature);
     }
 
@@ -145,7 +145,7 @@ class VPSPaymentService
 
 
 
-/**
+    /**
      * Process notification data and create/update order (Individual Status Logic)
      */
     public function processNotification($notificationData)
@@ -161,7 +161,7 @@ class VPSPaymentService
 
         // Find existing order
         $order = Order::where('order_number', $orderReference)->first();
-        
+
         if (!$order) {
             return ['success' => false, 'message' => 'Order not found'];
         }
@@ -172,85 +172,85 @@ class VPSPaymentService
                 $order->payment_status = 'authorize_pending';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'AUTHORIZED':
                 $order->payment_status = 'authorized';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'AUTH_REVERSED':
                 $order->payment_status = 'auth_reversed';
                 $order->status = 'cancelled';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'CANCELLED':
                 $order->payment_status = 'cancelled';
                 $order->status = 'cancelled';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'DECLINED':
                 $order->payment_status = 'declined';
                 $order->status = 'cancelled';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'CHARGE_PENDING':
                 $order->payment_status = 'charge_pending';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'CHARGED':
                 $order->payment_status = 'paid';
                 $order->status = 'processing';
                 $order->transaction_id = $transactionId;
                 $order->payment_method = 'VPS_PayWall';
                 break;
-                
+
             case 'CHARGED_BACK':
                 $order->payment_status = 'chargeback';
                 $order->status = 'disputed';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'CHARGEBACK_REVERSED':
                 $order->payment_status = 'chargeback_reversed';
                 $order->status = 'processing';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'CHARGEBACK_PENDING':
                 $order->payment_status = 'chargeback_pending';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'REFUND_PENDING':
                 $order->payment_status = 'refund_pending';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'REFUNDED':
                 $order->payment_status = 'refunded';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'ERROR':
                 $order->payment_status = 'error';
                 $order->status = 'cancelled';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'CREDITED_PENDING':
                 $order->payment_status = 'credit_pending';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             case 'CREDITED':
                 $order->payment_status = 'credited';
                 $order->transaction_id = $transactionId;
                 break;
-                
+
             default:
                 // Unknown status - log but don't update
                 \Log::warning('Unknown VPS status in service', [

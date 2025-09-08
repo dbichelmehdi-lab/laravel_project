@@ -35,6 +35,9 @@ Route::post('/upload_product',[AdminController::class,'upload_product']);
 
 Route::get('/view_product', [AdminController::class,'view_product']);
 
+// Add this route or update your existing route
+Route::get('/admin/products', [AdminController::class, 'view_product'])->name('admin.products');
+
 Route::get('/delete_product/{id}',[AdminController::class,'delete_product']);
 
 Route::post('/edit_product/{id}',[AdminController::class,'edit_product']);

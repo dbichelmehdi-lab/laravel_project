@@ -218,7 +218,8 @@ class HomeController extends Controller
         ]);
 
 
-        // Prepare order data for VPS:
+        // Prepare order data for VPS/
+
 
         $orderData = [
             'cart' => $cart,

@@ -51,10 +51,39 @@ class AdminController extends Controller
     }
 
 
-    public function view_product()
+    public function view_product(Request $request)
     {
-        $data = Product::with('category')->get();
-        return view('admin.show_product', compact('data'));
+        // Start with base query
+        $query = Product::with('category');
+
+        // Apply filters based on request parameters
+
+        // Search by product name
+        if ($request->filled('search')) {
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        // Filter by price range
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Get filtered results
+        $data = $query->get();
+
+        // Get all categories for the filter dropdown
+        $categories = Category::all();
+
+        return view('admin.show_product', compact('data', 'categories'));
     }
 
 

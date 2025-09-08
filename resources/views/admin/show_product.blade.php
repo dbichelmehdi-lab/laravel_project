@@ -37,7 +37,102 @@
                     </button>
                 </div>
 
-                <!-- User Table -->
+                <!-- Filter Section -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Filter Products</h2>
+                    <form method="GET" action="{{ route('admin.products') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <!-- Search by Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Search by Name</label>
+                            <input type="text" name="search" value="{{ request('search') }}" 
+                                placeholder="Product name..." 
+                                class="w-full rounded-lg border border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 text-sm px-3 py-2">
+                        </div>
+
+                        <!-- Filter by Category -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Category</label>
+                            <select name="category" 
+                                class="w-full rounded-lg border border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 text-sm px-3 py-2">
+                                <option value="">All Categories</option>
+                                @foreach($categories as $category)
+                                    <option value="{{$category->id}}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                        {{$category->category_name}}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Price Range</label>
+                            <div class="flex space-x-2">
+                                <input type="number" name="min_price" value="{{ request('min_price') }}" 
+                                    placeholder="Min" step="0.01"
+                                    class="w-1/2 rounded-lg border border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 text-sm px-3 py-2">
+                                <input type="number" name="max_price" value="{{ request('max_price') }}" 
+                                    placeholder="Max" step="0.01"
+                                    class="w-1/2 rounded-lg border border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 text-sm px-3 py-2">
+                            </div>
+                        </div>
+
+                        <!-- Filter Buttons -->
+                        <div class="flex space-x-2 items-end">
+                            <button type="submit" 
+                                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex-1">
+                                Filter
+                            </button>
+                            <a href="{{ route('admin.products') }}" 
+                                class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200 text-center">
+                                Reset
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Active Filters Display -->
+                    @if(request()->hasAny(['search', 'category', 'min_price', 'max_price']))
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-sm text-gray-600">Active filters:</span>
+                            
+                            @if(request('search'))
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                                    Search: "{{ request('search') }}"
+                                    <a href="{{ request()->fullUrlWithQuery(['search' => null]) }}" class="ml-1 text-blue-600 hover:text-blue-800">×</a>
+                                </span>
+                            @endif
+
+                            @if(request('category'))
+                                @php
+                                    $selectedCategory = $categories->find(request('category'));
+                                @endphp
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                                    Category: {{ $selectedCategory ? $selectedCategory->category_name : 'Unknown' }}
+                                    <a href="{{ request()->fullUrlWithQuery(['category' => null]) }}" class="ml-1 text-green-600 hover:text-green-800">×</a>
+                                </span>
+                            @endif
+
+                            @if(request('min_price') || request('max_price'))
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-purple-100 text-purple-800">
+                                    Price: ${{ request('min_price', '0') }} - ${{ request('max_price', '∞') }}
+                                    <a href="{{ request()->fullUrlWithQuery(['min_price' => null, 'max_price' => null]) }}" class="ml-1 text-purple-600 hover:text-purple-800">×</a>
+                                </span>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Results Summary -->
+                <div class="mb-4">
+                    <p class="text-gray-600">
+                        Showing <span class="font-semibold">{{ $data->count() }}</span> 
+                        @if($data->count() == 1) product @else products @endif
+                        @if(request()->hasAny(['search', 'category', 'min_price', 'max_price']))
+                            matching your filters
+                        @endif
+                    </p>
+                </div>
+
+                <!-- Product Table -->
                 <div class="overflow-x-auto bg-white rounded-lg shadow">
                     <table class="w-full table-auto">
                         <thead>
@@ -53,7 +148,7 @@
                         </thead>
                         <tbody class="text-gray-600 text-sm">
 
-                            @foreach ($data as $product)
+                            @forelse ($data as $product)
                                 <tr class="border-b border-gray-200 hover:bg-gray-100">
                                     <td class="py-3 px-6 text-left">{{$product->id}}</td>
                                     <td class="py-3 px-6 text-left">{{$product->name}}</td>
@@ -61,13 +156,12 @@
                                     <td class="py-3 px-6 text-left">${{$product->price}}</td>
                                     <td class="py-3 px-6 text-left">{{Str::limit($product->product_details, 50)}}</td>
                                     <td class="py-3 px-6 text-left">
-                                        <img src="product_img/{{$product->image}}" class="w-16 h-16 object-cover rounded"
-                                            alt="Product Image">
+                                        <img src="{{ asset('product_img/' . $product->image) }}" class="w-16 h-16 object-cover rounded" alt="Product Image">
+                                            
                                     </td>
 
                                     <td class="py-3 px-6 text-center">
                                         <div class="flex item-center justify-center">
-                                            <!-- Updated Edit Button - Now opens modal instead of navigating -->
                                             <button
                                                 onclick="openEditModal({{$product->id}}, '{{$product->name}}', {{$product->category_id}}, '{{$product->price}}', '{{addslashes($product->product_details)}}', '{{$product->image}}')"
                                                 class="w-4 mr-2 transform hover:text-blue-500 hover:scale-110 cursor-pointer">
@@ -88,7 +182,19 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="py-8 px-6 text-center text-gray-500">
+                                        @if(request()->hasAny(['search', 'category', 'min_price', 'max_price']))
+                                            No products found matching your filters. 
+                                            <a href="{{ route('admin.products') }}" class="text-blue-600 hover:underline">Clear filters</a> to see all products.
+                                        @else
+                                            No products available. 
+                                            <button onclick="openProductModal()" class="text-purple-600 hover:underline">Add your first product</button>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforelse
 
                         </tbody>
                     </table>
@@ -278,12 +384,12 @@
         </div>
     </div>
 
-     <!-- Success/Error Messages -->
+    <!-- Success/Error Messages -->
     <div id="alertMessage" class="fixed top-4 right-4 z-50 hidden">
         <div id="alertContent" class="px-4 py-3 rounded-lg shadow-lg">
             <span id="alertText"></span>
         </div>
-    </div> 
+    </div>
 
     <script>
         // Add Product Modal Functions
@@ -305,7 +411,7 @@
             document.getElementById('edit_category').value = categoryId;
             document.getElementById('edit_price').value = price;
             document.getElementById('edit_details').value = details;
-            document.getElementById('current_image').src = 'product_img/' + image;
+            document.getElementById('current_image').src = '{{ asset("") }}product_img/' + image;
 
             // Show the modal
             document.getElementById('editProductModal').classList.remove('hidden');
@@ -318,6 +424,7 @@
             document.getElementById('editProductForm').reset();
         }
 
+        
         // Handle edit form submission with AJAX
         document.getElementById('editProductForm').addEventListener('submit', function (e) {
             e.preventDefault();
@@ -326,7 +433,6 @@
             const productId = document.getElementById('edit_product_id').value;
             const submitBtn = document.getElementById('editSubmitBtn');
 
-            // Show loading state
             submitBtn.textContent = 'Updating...';
             submitBtn.disabled = true;
 
@@ -337,80 +443,31 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showAlert('Product updated successfully!', 'success');
-                        closeEditModal();
-                        // Reload page to show updated data
-                        setTimeout(() => {
+                .then(response => response.text())
+                .then(text => {
+                    console.log('Raw response:', text);
+                    try {
+                        const data = JSON.parse(text);
+                        if (data.success) {
+                            closeEditModal();
                             location.reload();
-                        }, 1500);
-                    } else {
-                        showAlert('Error updating product: ' + (data.message || 'Unknown error'), 'error');
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    } catch (e) {
+                        console.log('Not JSON, probably HTML error page');
+                        location.reload();
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showAlert('Error updating product. Please try again.', 'error');
+                    location.reload();
                 })
                 .finally(() => {
                     submitBtn.textContent = 'Update Product';
                     submitBtn.disabled = false;
                 });
         });
-
-        function showAlert(message, type) {
-            const alertDiv = document.getElementById('alertMessage');
-            const alertContent = document.getElementById('alertContent');
-            const alertText = document.getElementById('alertText');
-
-            alertText.textContent = message;
-
-            // Change color based on type
-            if (type === 'success') {
-                alertContent.className = 'bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg';
-            } else {
-                alertContent.className = 'bg-red-500 text-white px-4 py-3 rounded-lg shadow-lg';
-            }
-
-            alertDiv.classList.remove('hidden');
-
-            // Hide after 3 seconds
-            setTimeout(() => {
-                alertDiv.classList.add('hidden');
-            }, 3000);
-        }
-
-        // Close modals when clicking outside
-        document.getElementById('productModal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                closeProductModal();
-            }
-        });
-
-        document.getElementById('editProductModal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                closeEditModal();
-            }
-        });
-
-        // Close modals with Escape key
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                if (!document.getElementById('productModal').classList.contains('hidden')) {
-                    closeProductModal();
-                }
-                if (!document.getElementById('editProductModal').classList.contains('hidden')) {
-                    closeEditModal();
-                }
-            }
-        });
-
-        @if(session('refresh'))
-            // Force page reload to get fresh data
-            window.location.reload(true);
-        @endif
     </script>
 
 </body>

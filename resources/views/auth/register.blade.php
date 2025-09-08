@@ -89,21 +89,44 @@
                     <label for="email" class="block text-sm font-semibold text-gray-700">
                         {{ __('Email') }}
                     </label>
+    
+                    <!-- Error Message Above Input -->
+                    @error('email')
+                    <div class="bg-red-50 border-l-4 border-red-400 p-3 rounded-md animate-fade-in">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 8.414l1.293-1.293a1 1 0 00-1.414-1.414L10 6.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-red-800">{{ $message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @enderror
+    
                     <div class="relative">
                         <input 
-                            id="email" 
-                            name="email" 
-                            type="email" 
-                            value="{{ old('email') }}"
-                            autocomplete="username"
-                            required
-                            class="block w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 hover:bg-white focus:bg-white"
-                            placeholder="Enter your email address"
-                        />
+                        id="email" 
+                        name="email" 
+                        type="email" 
+                        value="{{ old('email') }}"
+                        autocomplete="username"
+                        required
+                        class="block w-full px-4 py-3 pr-12 border @error('email') border-red-300 bg-red-50 focus:ring-red-500 focus:border-red-500 @else border-gray-200 bg-gray-50/50 focus:ring-indigo-500 focus:border-transparent @enderror rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white focus:bg-white"
+                        placeholder="Enter your email address"/>
+
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        @error('email')
+                            <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        @else
                             <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                             </svg>
+                        @enderror
                         </div>
                     </div>
                 </div>
@@ -117,13 +140,13 @@
                         <input 
                             id="phone" 
                             name="phone" 
-                            type="tel" 
+                            type="number" 
                             value="{{ old('phone') }}"
-                            autocomplete="tel"
+                            autocomplete="tel" 
                             required
                             class="block w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 hover:bg-white focus:bg-white"
-                            placeholder="Enter your phone number"
-                        />
+                            placeholder="Enter your phone number"/>
+
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -146,8 +169,7 @@
                             autocomplete="street-address"
                             required
                             class="block w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 hover:bg-white focus:bg-white"
-                            placeholder="Enter your address"
-                        />
+                            placeholder="Enter your address"/>
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -170,13 +192,11 @@
                             autocomplete="new-password"
                             required
                             class="block w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 hover:bg-white focus:bg-white"
-                            placeholder="Create a strong password"
-                        />
+                            placeholder="Create a strong password"/>
                         <button 
                             type="button"
                             class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors duration-200"
-                            onclick="togglePassword('password')"
-                        >
+                            onclick="togglePassword('password')">
                             <svg id="passwordEyeIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -266,7 +286,7 @@
         <div class="text-center animate-fade-in">
             <p class="text-xs text-gray-500">
                 © 2025 Your Company. All rights reserved.
-            </p>
+            </p> 
         </div>
     </div>
 </div>

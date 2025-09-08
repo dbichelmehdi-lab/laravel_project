@@ -1,62 +1,51 @@
-<div class="bg-white">
-  <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-    <h2 class="text-2xl font-bold tracking-tight text-gray-900">Customers also purchased</h2>
+<div class="p-4 mx-auto lg:max-w-6xl md:max-w-4xl">
+  <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-6 sm:mb-8">Our Products</h2>
 
-    <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-      @foreach($data as $product)
-          <div class="group relative">
-            <a href="{{ route('product.details', $product->id) }}">
-              <img src="{{ asset('product_img/' . $product->image) }}" alt="Front of men's Basic Tee in black."
-                class="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80" />
-            </a>
-            <div class="mt-4 flex justify-between">
-              <div>
-                <h3 class="text-sm text-gray-700 relative z-10">
-
-                  {{$product->name}}
-
-                </h3>
-                <p class="mt-1 text-sm text-gray-500">{{$product->product_details}}</p>
-              </div>
-              <p class="text-sm font-medium text-gray-900">${{$product->price}}</p>
-            </div>
-
-            <form action="{{url('add_cart', $product->id)}}" class="add-to-cart-form mt-3" method="POST">
-              @csrf
-              <div class="flex justify-start items-center gap-3">
-                <input type="number" name="qty" min="1" value="1" class="hidden" />
-
-                <!-- Add to Cart Button -->
-                <button type="submit"
-                  class="flex items-center gap-2 px-5 py-2 rounded-lg text-white font-medium bg-gradient-to-r from-blue-500 to-blue-700 shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-800 transform hover:-translate-y-0.5 transition-all duration-200">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 6h13M7 13l-4-8m0 0H2m16 16a1 1 0 100-2 1 1 0 000 2zm-10 0a1 1 0 100-2 1 1 0 000 2z" />
-                  </svg>
-
-                </button>
-            </form>
-
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+    @foreach($data as $product)
+    <div class="bg-white flex flex-col rounded-sm overflow-hidden shadow-md hover:scale-[1.01] transition-all relative">
+      <!-- Product Link -->
+      <a href="{{ route('product.details', $product->id) }}" class="block">
+        <div class="w-full">
+          <img src="{{ asset('product_img/' . $product->image) }}" alt="{{ $product->name }}"
+            class="w-full aspect-[18/24] object-cover object-top" />
+        </div>
+        <div class="p-4">
+          <!-- Product Name -->
+          <h5 class="text-sm sm:text-base font-semibold text-slate-900 line-clamp-2">
+            {{ $product->name }}
+          </h5>
+          <!-- Product Description -->
+          <p class="text-xs text-gray-500 mt-1 line-clamp-2">{{ $product->product_details }}</p>
+          
+          <!-- Price + Wishlist -->
+          <div class="mt-2 flex items-center flex-wrap gap-2">
+            <h6 class="text-sm sm:text-base font-semibold text-slate-900">${{ $product->price }}</h6>
+            
             <!-- Wishlist Button -->
-            <form action="{{ route('wishlist.add', $product->id) }}" method="POST">
+            <form action="{{ route('wishlist.add', $product->id) }}" method="POST" class="ml-auto">
               @csrf
-              <button type="submit" class="group p-2 rounded-full hover:bg-red-100 transition">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-gray-500 group-hover:text-red-500 transition-colors duration-200" viewBox="0 0 20 20"
-                  fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                    clip-rule="evenodd" />
+              <button type="submit" class="bg-slate-100 w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-100 transition" title="Add to Wishlist">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16px" class="fill-slate-800 group-hover:fill-red-500 transition" viewBox="0 0 64 64">
+                  <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"/>
                 </svg>
               </button>
             </form>
           </div>
-          </form>
-
-
         </div>
-      @endforeach
+      </a>
+
+      <!-- Add to Cart -->
+      <div class="min-h-[50px] p-4 !pt-0">
+        <form action="{{ url('add_cart', $product->id) }}" method="POST" class="absolute left-0 right-0 bottom-3 max-w-[88%] mx-auto">
+          @csrf
+          <input type="number" name="qty" value="1" min="1" class="hidden">
+          <button type="submit" class="cursor-pointer text-sm px-2 py-2 font-medium w-full bg-blue-600 hover:bg-blue-700 text-white tracking-wide outline-none border-none rounded-sm">
+            Add to cart
+          </button>
+        </form>
+      </div>
+    </div>
+    @endforeach
   </div>
-</div>
 </div>

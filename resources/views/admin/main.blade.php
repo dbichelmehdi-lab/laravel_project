@@ -147,7 +147,7 @@
                                                 <td class="p-4">
                                                     <span
                                                         class="px-2 py-1 rounded text-xs
-                                                                                                {{ $customer->customer_type == 'VIP Customer' ? 'bg-green-100 text-green-800' :
+                                                                                                                    {{ $customer->customer_type == 'VIP Customer' ? 'bg-green-100 text-green-800' :
                             ($customer->customer_type == 'Regular Customer' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800') }}">
                                                         {{ $customer->customer_type }}
                                                     </span>
@@ -187,7 +187,7 @@
                                                 <td class="p-4">
                                                     <span
                                                         class="px-2 py-1 rounded text-xs
-                                                                                                {{ $order->status == 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                                                                                    {{ $order->status == 'pending' ? 'bg-yellow-100 text-yellow-800' :
                             ($order->status == 'processing' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800') }}">
                                                         {{ $order->status }}
                                                     </span>
@@ -195,7 +195,7 @@
                                                 <td class="p-4">
                                                     <span
                                                         class="px-2 py-1 rounded text-xs
-                                                                                                {{ $order->payment_status == 'paid' ? 'bg-green-100 text-green-800' :
+                                                                                                                    {{ $order->payment_status == 'paid' ? 'bg-green-100 text-green-800' :
                             ($order->payment_status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
                                                         {{ $order->payment_status }}
                                                     </span>
@@ -238,7 +238,7 @@
                                 <td class="p-4">
                                     <span
                                         class="px-2 py-1 rounded text-xs
-                                                {{ $user->usertype == 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
+                                                    {{ $user->usertype == 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
                                         {{ ucfirst($user->usertype) }}
                                     </span>
                                 </td>

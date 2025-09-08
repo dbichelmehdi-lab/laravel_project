@@ -243,8 +243,13 @@
                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
                     </div>
+
                     <div class="flex-1">
-                        <p class="text-gray-800 font-medium text-sm">Admin User</p>
+                        @if(Auth::user())
+                            <p class="text-gray-800 font-medium text-sm">{{ Auth::user()->name }}</p>
+                        @else
+                            <p class="text-gray-800 font-medium text-sm">Admin User</p>
+                        @endif
                         <div class="flex items-center space-x-2">
                             <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                             <p class="text-gray-500 text-xs">Online</p>

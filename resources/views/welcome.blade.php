@@ -26,15 +26,13 @@
                     @auth
                         <a
                             href="{{ url('/dashboard') }}"
-                            class="inline-block px-5 py-1.5 border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] rounded-sm text-sm leading-normal"
-                        >
+                            class="inline-block px-5 py-1.5 border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] rounded-sm text-sm leading-normal">
                             Dashboard
                         </a>
                     @else
                         <a
                             href="{{ route('login') }}"
-                            class="inline-block px-5 py-1.5 text-[#1b1b18] border border-transparent hover:border-[#19140035] rounded-sm text-sm leading-normal"
-                        >
+                            class="inline-block px-5 py-1.5 text-[#1b1b18] border border-transparent hover:border-[#19140035] rounded-sm text-sm leading-normal">
                             Log in
                         </a>
 
@@ -71,13 +69,11 @@
                                         viewBox="0 0 10 11"
                                         fill="none"
                                         xmlns="http://www.w3.org/2000/svg"
-                                        class="w-2.5 h-2.5"
-                                    >
+                                        class="w-2.5 h-2.5">
                                         <path
                                             d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
                                             stroke="currentColor"
-                                            stroke-linecap="square"
-                                        />
+                                            stroke-linecap="square"/>
                                     </svg>
                                 </a>
                             </span>
@@ -98,13 +94,11 @@
                                         viewBox="0 0 10 11"
                                         fill="none"
                                         xmlns="http://www.w3.org/2000/svg"
-                                        class="w-2.5 h-2.5"
-                                    >
+                                        class="w-2.5 h-2.5">
                                         <path
                                             d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
                                             stroke="currentColor"
-                                            stroke-linecap="square"
-                                        />
+                                            stroke-linecap="square"/>
                                     </svg>
                                 </a>
                             </span>

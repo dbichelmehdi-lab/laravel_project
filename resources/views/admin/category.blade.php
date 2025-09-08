@@ -20,8 +20,8 @@
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col">
-            <!-- Header -->
-            @include('admin.header')
+            {{-- <!-- Header -->
+            @include('admin.header') --}}
 
         </div>
         </header>
